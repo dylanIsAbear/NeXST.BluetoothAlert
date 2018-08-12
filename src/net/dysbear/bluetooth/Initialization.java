@@ -1,5 +1,6 @@
 package net.dysbear.bluetooth;
 import javax.bluetooth.*;
+import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 import javax.obex.*;
@@ -10,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Initialization {
-// Initialize the local device.
+/*// Initialize the local device.
 private static LocalDevice local = null;
 // Initialize the stream.
 private StreamConnection streamConnection = null;
@@ -95,13 +96,46 @@ public static void findDevices() throws IOException, InterruptedException{
 	
 	
 }
+*/
+	/*First the application retrieves a reference to the Bluetooth Manager from the LocalDevice. Client applications ret
+	rieve a reference to the DiscoveryAgent, which provides all the discovery-related services. Server applications make the 
+	device discoverable. In the following code snippet, the ini
+	tialization method btInit() performs both client and server initialization*/
+private LocalDevice localDevice; // Local Bluetooth Manager
+private DiscoveryAgent discoveryAgent; // discovery agent
+private static final String myBtServiceName = "dylan"; // service's name
+private static final String myServiceUUID = "2d26618601fb47c28d9f10b8ec891363";
+private UUID uuid = new UUID(myServiceUUID,false); // initialize UUID
+
+
+public void btInit() throws BluetoothStateException, IOException{
+	localDevice = null;
+	discoveryAgent = null;
+	// free the localdevice to get the bluetooth manager
+	localDevice = LocalDevice.getLocalDevice();
+	// Server setup to discoverable
+	localDevice.setDiscoverable(DiscoveryAgent.GIAC);
+	//Agent is retrived by Client
+	discoveryAgent = localDevice.getDiscoveryAgent();
+	
+	
+	String connURL = "btspp://localhost:"+uuid.toString()+";"+"name="+myBtServiceName;
+	// Create a connection (notifier)
+	StreamConnectionNotifier scn = (StreamConnectionNotifier)Connector.open(connURL);
+	
+	// Accept a new client connection
+	
+}
+/*create a Bluetooth connection using the GCF connection factory javax.microed
+ * ition.io.Connector, passing to its open() method a connection URL argument de
+ * scribing the connection endpoint to create.
+ */
 
 public static void main(String args[]) {
 	
 	try {
 		
-		findDevices();
-		
+		//findDevices();
 		
 	} catch (IOException | InterruptedException e) {
 		e.printStackTrace();
