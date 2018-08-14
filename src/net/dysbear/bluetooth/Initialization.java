@@ -137,7 +137,7 @@ public static void main(String args[]) {
 		
 		//findDevices();
 		
-	} catch (IOException | InterruptedException e) {
+	} catch (Exception e) {
 		e.printStackTrace();
 	}
 }
