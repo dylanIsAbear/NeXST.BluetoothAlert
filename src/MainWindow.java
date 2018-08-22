@@ -1,17 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
+import java.awt.event.*;
+import java.util.Map;
 
 
 public class MainWindow extends JFrame {
+    private JLabel appName = new JLabel();
+    private JLabel versionInfo = new JLabel();
+    private JToggleButton alertSwitch;
+    private JList<String> list;
+
     //Create a menu bar.
     private String[][] menuNameMnemonics = { { "File", "f" }, { "Edit", "e" }, { "Help", "h" } };
     private JMenuBar menuBar;
@@ -93,47 +91,83 @@ public class MainWindow extends JFrame {
     //Constructor.
     public MainWindow() {
         //Create text boxes.
-        JLabel appName = new JLabel();
         appName.setText("Tooth Protector");
         appName.setFont(new Font("", Font.BOLD, 22));
         appName.setHorizontalAlignment(JLabel.CENTER);
         appName.setHorizontalTextPosition(JLabel.CENTER);
         appName.setVerticalTextPosition(JLabel.CENTER);
         appName.setSize(180, 50);
-        appName.setLocation(0, 0);
+        appName.setLocation(40, 155);
         this.add(appName);
 
-        JLabel versionInfo = new JLabel();
         versionInfo.setText("Version: 0.1.0");
         versionInfo.setFont(new Font("", Font.BOLD, 14));
         versionInfo.setHorizontalAlignment(JLabel.CENTER);
         versionInfo.setHorizontalTextPosition(JLabel.CENTER);
         versionInfo.setVerticalTextPosition(JLabel.CENTER);
-        versionInfo.setLocation(0,50);
+        versionInfo.setLocation(40,205);
         versionInfo.setSize(180,20);
         this.add(versionInfo);
 
         //Create the switch.
-        JToggleButton alertSwitch = new JToggleButton("Alert", true);
-        alertSwitch.setLocation(30,80);
+        alertSwitch = new JToggleButton("Alert On", true);
+        alertSwitch.setLocation(70,235);
         alertSwitch.setSize(120,30);
+        alertSwitch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(!alertSwitch.isSelected()) {
+                    alertSwitch.setText("Alert Off");
+                    alertSwitch.setSelected(false);
+                }
+                else{
+                    alertSwitch.setText("Alert On");
+                    alertSwitch.setSelected(true);
+                }
+            }
+        });
         this.add(alertSwitch);
-        Alert alert = new Alert();
-        alert.start();
 
         //Add menu bar.
         this.createJMenu();
         this.setJMenuBar(menuBar);
 
+        //Add new list.
+        String[] str = {"Nothing has been found."};
+        list = new JList(str);
+        list.setSize(100,300);
+        list.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+        JScrollPane container = new JScrollPane(list);
+        container.setLocation(250,25);
+        container.setSize(500,400);
+        this.add(container);
+
         //Window settings.
         this.setTitle("Tooth Protector");
         this.setSize(800, 500);
         this.setLayout(null);
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLocation(200, 200);
 
         //Show.
         this.setVisible(true);
+    }
+
+    public void setDisplay(Map<Integer, String> newValue) {
+        if(newValue.size() == 0) {
+            list.setListData(new String[] {"Nothing has been found."});
+            return;
+        }
+        String[] updatedData = new String[newValue.size()];
+        int i = 0;
+        for(Integer it : newValue.keySet()) {
+            updatedData[i] = newValue.get(it);
+            i++;
+        }
+        list.setListData(updatedData);
+    }
+
+    public boolean getSelected() {
+        return alertSwitch.isSelected();
     }
 }
